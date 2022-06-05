@@ -30,7 +30,7 @@ public class booking_program {
         }
     }
     private static class Administrator{
-        public Administrator() throws IOException {
+        public Administrator() throws IOException { //로그인 과정
             System.out.println("---------------------------");
             System.out.println("- 관리자 모드로 로그인합니다. -");
             System.out.println("---------------------------");
@@ -46,96 +46,107 @@ public class booking_program {
          */
         class branch_management{
             public branch_management() throws IOException {
-                System.out.println("\t"+LocalDate.now()+" 지점 상태");
-                read();
-                System.out.println();
-                System.out.println("1)지점 정보 수정\t\t2)지점 추가\t\t3)지점 삭제");
-                System.out.println("(모드를 중단하고 홈 화면으로 돌아가시려면 q를 입력해주세요)");
+                while (true) { //로그인 상태 유지
+                    System.out.println("\t" + LocalDate.now() + " 지점 상태");
+                    read();
+                    System.out.println();
+                    System.out.println("1)지점 정보 수정\t\t2)지점 추가\t\t3)지점 삭제");
+                    System.out.println("(로그아웃하고 초기 화면으로 돌아가시려면 q를 입력해주세요)");
 
-                char mode = checkInput(1);
-                if (mode=='1'){
-                    char branch = '0';
-                    String[] range = new String[]{"1","2","3","4","5","6"};
-                    while (branch=='0') {
-                        //System.out.println();
-                        System.out.print("[지점수정]어느 지점으로 이동할까요? >> ");
-                        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-                        String str = reader.readLine();
+                    char mode = checkInput(1);
+                    if (mode == '1') {
+                        char branch = '0';
+                        String[] range = new String[]{"1", "2", "3", "4", "5", "6"};
+                        while (branch == '0') {
+                            //System.out.println();
+                            System.out.print("[지점수정]어느 지점으로 이동할까요? >> ");
+                            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+                            String str = reader.readLine();
                         /*if (str.charAt(0)!='1' && str.charAt(0)!='2' && str.charAt(0)!='3' && str.charAt(0)!='4' && str.charAt(0)!='5' && str.charAt(0)!='q'){
 
                         }*/
-                        if (str.length() != 1) continue;
-                        if (str.equals("q")) q();
-                        if (!Arrays.asList(range).contains(str)){
-                            System.out.printf("해당 지점 번호는 사용할 수 없습니다. 1~6 사이의 자연수를 입력해주세요.\n");
-                            continue;
+                            if (str.length() != 1) continue;
+                            if (str.equals("q")) {
+                                System.out.printf("입력을 중단합니다...\n");
+                                break; //작성을 종료하고 다시 mode를 입력받음.
+                            }
+                            if (!Arrays.asList(range).contains(str)) {
+                                System.out.printf("해당 지점 번호는 사용할 수 없습니다. 1~6 사이의 자연수를 입력해주세요.\n");
+                                continue;
+                            }
+                            if (!checkBranch(str)) {
+                                System.out.printf("%s번 지점은 존재하지 않습니다.\n", str);
+                                System.out.printf("※스터디 공간 수정을 원하시면 지점 생성 후 다시 시도해주세요.\n");
+                                continue;
+                            }
+                            branch = str.charAt(0);
                         }
-                        if (!checkBranch(str)){
-                            System.out.printf("%s번 지점은 존재하지 않습니다.\n", str);
-                            System.out.printf("※스터디 공간 수정을 원하시면 지점 생성 후 다시 시도해주세요.\n");
-                            continue;
-                        }
-                        branch = str.charAt(0);
-                    }
-                    modify(branch);
-                } else if (mode=='2') {
-                    char branch = '0';
-                    String[] range = new String[]{"1","2","3","4","5","6"};
-                    while (branch=='0') {
-                        //System.out.println();
-                        System.out.print("[지점추가]추가할 지점의 번호를 입력해주세요 >> ");
-                        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-                        String str = reader.readLine();
+                        modify(branch);
+                    } else if (mode == '2') {
+                        char branch = '0';
+                        String[] range = new String[]{"1", "2", "3", "4", "5", "6"};
+                        while (branch == '0') {
+                            //System.out.println();
+                            System.out.print("[지점추가]추가할 지점의 번호를 입력해주세요 >> ");
+                            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+                            String str = reader.readLine();
                         /*if (str.charAt(0)!='1' && str.charAt(0)!='2' && str.charAt(0)!='3' && str.charAt(0)!='4' && str.charAt(0)!='5' && str.charAt(0)!='q'){
 
                         }*/
-                        if (str.length() != 1) continue;
-                        if (str.equals("q")) q();
-                        if (!Arrays.asList(range).contains(str)){
-                            System.out.printf("해당 지점 번호는 사용할 수 없습니다. 1~6 사이의 자연수를 입력해주세요.\n");
-                            continue;
+                            if (str.length() != 1) continue;
+                            if (str.equals("q")) {
+                                System.out.printf("입력을 중단합니다...\n");
+                                break; //작성을 종료하고 다시 mode를 입력받음.
+                            }
+                            if (!Arrays.asList(range).contains(str)) {
+                                System.out.printf("해당 지점 번호는 사용할 수 없습니다. 1~6 사이의 자연수를 입력해주세요.\n");
+                                continue;
+                            }
+                            if (checkBranch(str)) {
+                                System.out.printf("%s번 지점은 이미 존재합니다.\n", str);
+                                System.out.printf("(입력을 중단하고 홈 화면으로 돌아가시려면 q를 입력해주세요)\n");
+                                continue;
+                            }
+                            branch = str.charAt(0);
                         }
-                        if (checkBranch(str)){
-                            System.out.printf("%s번 지점은 이미 존재합니다.\n", str);
-                            System.out.printf("(입력을 중단하고 홈 화면으로 돌아가시려면 q를 입력해주세요)\n");
-                            continue;
-                        }
-                        branch = str.charAt(0);
-                    }
-                    add(branch);
-                } else if (mode=='3') {
-                    char branch = '0';
-                    String[] range = new String[]{"1","2","3","4","5","6"};
-                    while (branch=='0') {
-                        //System.out.println();
-                        System.out.print("[지점삭제]삭제할 지점의 번호를 입력해주세요 >> ");
-                        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-                        String str = reader.readLine();
+                        add(branch);
+                    } else if (mode == '3') {
+                        char branch = '0';
+                        String[] range = new String[]{"1", "2", "3", "4", "5", "6"};
+                        while (branch == '0') {
+                            //System.out.println();
+                            System.out.print("[지점삭제]삭제할 지점의 번호를 입력해주세요 >> ");
+                            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+                            String str = reader.readLine();
                         /*if (str.charAt(0)!='1' && str.charAt(0)!='2' && str.charAt(0)!='3' && str.charAt(0)!='4' && str.charAt(0)!='5' && str.charAt(0)!='q'){
 
                         }*/
-                        if (str.length() != 1) continue;
-                        if (str.equals("q")) q();
-                        if (!Arrays.asList(range).contains(str)){
-                            System.out.printf("해당 지점 번호는 사용할 수 없습니다. 1~6 사이의 자연수를 입력해주세요.\n");
-                            continue;
+                            if (str.length() != 1) continue;
+                            if (str.equals("q")) {
+                                System.out.printf("입력을 중단합니다...\n");
+                                break; //작성을 종료하고 다시 mode를 입력받음.
+                            }
+                            if (!Arrays.asList(range).contains(str)) {
+                                System.out.printf("해당 지점 번호는 사용할 수 없습니다. 1~6 사이의 자연수를 입력해주세요.\n");
+                                continue;
+                            }
+                            if (!checkBranch(str)) {
+                                System.out.printf("%s번 지점은 존재하지 않습니다.\n", str);
+                                System.out.printf("(입력을 중단하고 홈 화면으로 돌아가시려면 q를 입력해주세요)\n");
+                                continue;
+                            }
+                            if (!can_delete(str)) {
+                                System.out.printf("%s번 지점에 스터디 공간이 존재합니다.\n", str);
+                                System.out.printf("※스터디 공간을 모두 삭제한 뒤 다시 시도해주세요.\n");
+                                System.out.printf("(입력을 중단하고 홈 화면으로 돌아가시려면 q를 입력해주세요)\n");
+                                continue;
+                            }
+                            branch = str.charAt(0);
                         }
-                        if (!checkBranch(str)){
-                            System.out.printf("%s번 지점은 존재하지 않습니다.\n", str);
-                            System.out.printf("(입력을 중단하고 홈 화면으로 돌아가시려면 q를 입력해주세요)\n");
-                            continue;
-                        }
-                        if (!can_delete(str)){
-                            System.out.printf("%s번 지점에 스터디 공간이 존재합니다.\n", str);
-                            System.out.printf("※스터디 공간을 모두 삭제한 뒤 다시 시도해주세요.\n");
-                            System.out.printf("(입력을 중단하고 홈 화면으로 돌아가시려면 q를 입력해주세요)\n");
-                            continue;
-                        }
-                        branch = str.charAt(0);
-                    }
-                    delete(branch);
-                    //
-                } else if (mode=='q') q();
+                        delete(branch);
+                        //
+                    } else if (mode == 'q') q(); //홈 화면에서 quit명령 실행 시 초기화면으로 돌아감.
+                }
             }
 
             //스터디 지점 상태 정보 저장해놓은 파일 불러와 읽음
@@ -191,7 +202,6 @@ public class booking_program {
                 writer.close();
                 //Files.write(Files.createFile(Paths.get(filePath)), contents.getBytes());
                 System.out.printf("지점 추가가 완료되었습니다.\n");
-                System.out.printf("초기 화면으로 돌아갑니다..\n");
             }
 
             void delete(char branch) throws IOException {
@@ -209,7 +219,6 @@ public class booking_program {
                 writer.close();
                 //Files.write(Files.createFile(Paths.get(filePath)), contents.getBytes());
                 System.out.printf("지점 삭제가 완료되었습니다.\n");
-                System.out.printf("초기 화면으로 돌아갑니다..\n");
             }
 
             //스터디 공간 관리 클래스로 전환
@@ -287,7 +296,10 @@ public class booking_program {
 
                         }*/
                                 if (str.length() != 1) continue;
-                                if (str.equals("q")) q();
+                                if (str.equals("q")) {
+                                    System.out.printf("입력을 중단합니다...\n");
+                                    break; //작성을 종료하고 다시 mode를 입력받음.
+                                }
                                 if (!Arrays.asList(range).contains(str)) {
                                     System.out.printf("해당 방 번호는 사용할 수 없습니다. 1~5 사이의 자연수를 입력해주세요.\n", str);
                                     continue;
@@ -304,7 +316,10 @@ public class booking_program {
                                 BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
                                 String str = reader.readLine();
 
-                                if (str.equals("q")) q();
+                                if (str.equals("q")) {
+                                    System.out.printf("입력을 중단합니다...\n");
+                                    break; //작성을 종료하고 다시 mode를 입력받음.
+                                }
                                 if (!Arrays.asList(range2).contains(str)) {
                                     System.out.printf("허용 인원수는 최대 10인까지입니다. 1~10 사이의 자연수를 입력해주세요.\n", str);
                                     System.out.printf("(입력을 중단하고 홈 화면으로 돌아가시려면 q를 입력해주세요)\n");
@@ -333,7 +348,10 @@ public class booking_program {
 
                         }*/
                                 if (str.length() != 1) continue;
-                                if (str.equals("q")) q();
+                                if (str.equals("q")) {
+                                    System.out.printf("입력을 중단합니다...\n");
+                                    break; //작성을 종료하고 다시 mode를 입력받음.
+                                }
                                 if (!Arrays.asList(range).contains(str)) {
                                     System.out.printf("해당 방 번호는 사용할 수 없습니다. 1~5 사이의 자연수를 입력해주세요.\n", str);
                                     continue;
@@ -350,7 +368,10 @@ public class booking_program {
                                 BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
                                 String str = reader.readLine();
 
-                                if (str.equals("q")) q();
+                                if (str.equals("q")) {
+                                    System.out.printf("입력을 중단합니다...\n");
+                                    break; //작성을 종료하고 다시 mode를 입력받음.
+                                }
                                 if (!Arrays.asList(range2).contains(str)) {
                                     System.out.printf("허용 인원수는 최대 10인까지입니다. 1~10 사이의 자연수를 입력해주세요.\n", str);
                                     System.out.printf("(입력을 중단하고 홈 화면으로 돌아가시려면 q를 입력해주세요)\n");
@@ -377,7 +398,10 @@ public class booking_program {
 
                         }*/
                                 if (str.length() != 1) continue;
-                                if (str.equals("q")) q();
+                                if (str.equals("q")) {
+                                    System.out.printf("입력을 중단합니다...\n");
+                                    break; //작성을 종료하고 다시 mode를 입력받음.
+                                }
                                 if (!Arrays.asList(range).contains(str)) {
                                     System.out.printf("해당 방 번호는 사용할 수 없습니다. 1~5 사이의 자연수를 입력해주세요.\n", str);
                                     continue;
@@ -531,7 +555,7 @@ public class booking_program {
         List<String> data_for_date_file = new ArrayList<String>(); //data file 만들 때 넣을 string
         String user;
 
-        public User() throws IOException {
+        public User() throws IOException { //로그인 과정
             System.out.println("---------------------------");
             System.out.println("- 사용자 모드로 로그인합니다. -");
             System.out.println("---------------------------");
@@ -573,15 +597,17 @@ public class booking_program {
             public Reservation() throws IOException {
                 while (true) {
                     System.out.println("1)스터디 공간 조회\t\t2)신규 예약\t\t3)예약 수정");
-                    System.out.println("(모드를 중단하고 홈 화면으로 돌아가시려면 q를 입력해주세요)");
+                    System.out.println("(로그아웃하고 초기 화면으로 돌아가시려면 q를 입력해주세요)");
 
                     char mode = checkInput(1);
+                    //원래는 사용자 편의를 위해 로그인 시 바로 신규예약을 할 수 있도록 지점 정보를 띄우려고 했으나,
+                    //스터디 공간 조회 기능이 필수라서 넣지 않았습니다.
                     if (mode == '1') {
                         char branch = '0';
                         String[] range = new String[]{"1", "2", "3", "4", "5", "6"};
+                        System.out.print("스터디 공간 조회를 위해 지점 정보를 불러옵니다.\n");
                         while (branch == '0') {
                             //System.out.println();
-                            System.out.print("스터디 공간 조회를 위해 지점 정보를 불러옵니다.\n");
                             System.out.print("[공간조회]어느 지점 정보를 가져올까요? >> ");
                             BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
                             String str = reader.readLine();
@@ -589,13 +615,21 @@ public class booking_program {
 
                         }*/
                             if (str.length() != 1) continue;
-                            if (str.equals("q")) q();
+                            if (str.equals("q")) {
+                                System.out.printf("입력을 중단합니다...\n");
+                                break;
+                                //작성을 종료하고 다시 mode를 입력받음.
+                                //관리자/유저 모드를 하나의 로그인 형태로 인식하면, 홈 화면의 기준은 관리자/유저 모드임.
+                                //또 보통의 예약 프로그램의 경우 입력 중단시 완전 초기화면으로 돌아가는 것이 아니라
+                                //유저 기록을 유지한 상태에서 다른 기능을 사용할 수 있는 형태임.
+                                //따라서 그러한 방식으로 알고리즘을 짰음.
+                            }
                             if (!Arrays.asList(range).contains(str)) {
                                 System.out.printf("해당 지점 번호는 사용할 수 없습니다. 1~6 사이의 자연수를 입력해주세요.\n", str);
                                 continue;
                             }
                             if (!can_reservate_branch(str)) {
-                                System.out.printf("%s호점 스터디 공간은 존재하지 않습니다.\n", str);
+                                System.out.printf("※%s호점 스터디 공간은 존재하지 않습니다.\n", str);
                                 continue;
                             }
                             branch = str.charAt(0);
@@ -613,7 +647,11 @@ public class booking_program {
                             BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
                             String str = reader.readLine();
                             if (str.length() != 1) continue;
-                            if (str.equals("q")) q();
+                            if (str.equals("q")) {
+                                System.out.printf("입력을 중단합니다...\n");
+                                break; //작성을 종료하고 다시 mode를 입력받음.
+                            }
+
                             if (!Arrays.asList(range).contains(str)) {
                                 System.out.printf("지점[%s]은/는 존재하지 않습니다. 1~6 사이의 자연수를 입력해주세요.\n", str);
                                 continue;
@@ -639,7 +677,10 @@ public class booking_program {
                             BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
                             String str = reader.readLine();
                             if (str.length() != 1) continue;
-                            if (str.equals("q")) q();
+                            if (str.equals("q")) {
+                                System.out.printf("입력을 중단합니다...\n");
+                                break; //작성을 종료하고 다시 mode를 입력받음.
+                            }
                             for (int i=0; i<result.length(); i++){
                                 if (result.charAt(i)==str.charAt(0)){
                                     space = str.charAt(0);
@@ -655,18 +696,18 @@ public class booking_program {
                             BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
                             String str = reader.readLine();
                             if (str.length() != 6) continue;
-                            if (str.equals("q")) q();
+                            if (str.equals("q")) {
+                                System.out.printf("입력을 중단합니다...\n");
+                                break; //작성을 종료하고 다시 mode를 입력받음.
+                            }
                             int year = Integer.parseInt(str.substring(0,2)) + 2000;
                             int month = Integer.parseInt(str.substring(2,4));
                             int day = Integer.parseInt(str.substring(4,6));
                             //연,월,일이 규칙에 맞는지 체크
                             if(checkDate(year,month,day)){
                                 //연,월,일이 오늘 이후인지 체크
-                                if (year_today < year) date = str;
-                                else if (year_today == year && month_today < month) date = str;
-                                else if (year_today == year && month_today == month && day_today < day) date = str;
-                                else {
-                                    System.out.printf("※예약은 %d년 %d월 %d일부터 가능합니다.\n", year_today, month_today, day_today+1);
+                                if (checkDatePassed(year, month, day)) {
+                                    System.out.printf("※예약은 %d년 %d월 %d일부터 가능합니다.\n", year_today, month_today, day_today + 1);
                                 }
                             }else{
                                 System.out.printf("※%d년 %d월 %d일은 존재하지 않습니다.\n", year, month, day);
@@ -695,7 +736,10 @@ public class booking_program {
                             System.out.printf("[신규예약]%s호실 예약 시작 시간을 입력해주세요(8~21) >> ", space);
                             BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
                             String str = reader.readLine();
-                            if (str.equals("q")) q();
+                            if (str.equals("q")) {
+                                System.out.printf("입력을 중단합니다...\n");
+                                break; //작성을 종료하고 다시 mode를 입력받음.
+                            }
                             try {
                                 Integer.parseInt(str);
                             }catch (NumberFormatException e){
@@ -714,10 +758,13 @@ public class booking_program {
                         }
                         int end = 0;
                         while (end == 0){
-                            System.out.printf("[신규예약]%s호실 사용 예정시간을 입력해주세요(최소:1 최대:%d) >> ", space, 22-start);
+                            System.out.printf("[신규예약]%s호실 사용 예정시간을 입력해주세요(최소:1 최대:14) >> ", space);
                             BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
                             String str = reader.readLine();
-                            if (str.equals("q")) q();
+                            if (str.equals("q")) {
+                                System.out.printf("입력을 중단합니다...\n");
+                                break; //작성을 종료하고 다시 mode를 입력받음.
+                            }
                             try {
                                 Integer.parseInt(str);
                             }catch (NumberFormatException e){
@@ -742,6 +789,7 @@ public class booking_program {
                             end = start + Integer.parseInt(str);
                         }
                         add_date(date, branch, space, start, end);
+                        add_user(date, user, branch, space, start, end);
                     } else if (mode == '3') {
                         //예약 수정 기능 + 조회 기능
                         //해당 ID 파일 읽어서 예약 정보 한 줄씩 배열에 저장.
@@ -752,26 +800,61 @@ public class booking_program {
                         if (!file.exists()) {           // 파일이 존재하지 않으면
                             System.out.printf("예약한 내용이 없습니다.\n");
                         }else {
+                            System.out.printf("예약 내역을 불러옵니다.\n");
                             BufferedReader reader = new BufferedReader(new FileReader(file));
                             String line;
+                            String document = "";
+                            int i=1;
                             while ((line = reader.readLine()) != null) {
                                 String[] parsed = line.split("[.]");
                                 String date_data = parsed[0];
-                                String room_data = parsed[1];
-                                String reservation_data = parsed[2];
+                                int year = Integer.parseInt(date_data.substring(0,2));
+                                int month = Integer.parseInt(date_data.substring(2,4));
+                                int day = Integer.parseInt(date_data.substring(4,6));
+                                if (!checkDatePassed(year, month, day)) { //미래의 예약만 출력
+                                    String branch_data = parsed[1].substring(0, 1);
+                                    String space_data = parsed[1].substring(2, 3);
+                                    String reservation_data = parsed[2];
+
+                                    System.out.printf("%d.\n");
+                                    System.out.printf("예약일자 : %d년 %d월 %d일\n", year, month, day);
+                                    System.out.printf("예약장소 : 지점[%s] %s호\n", branch_data, space_data);
+                                    System.out.printf("예약시간 : %c시~%c시\n", reservation_data.indexOf("1") + 8, reservation_data.lastIndexOf("1") + 8);
+
+                                    document += i+"."+line+"/";
+                                    i++;
+                                }
                             }
-                            char branch = '0';
-                            while (branch == '0') {
+                            int num = 0;
+                            while (num == 0) {
                                 //System.out.println();
                                 System.out.print("[예약수정]수정하고자 하는 예약 넘버를 입력해주세요 >> ");
                                 reader = new BufferedReader(new InputStreamReader(System.in));
                                 String str = reader.readLine();
+                                try {
+                                    Integer.parseInt(str);
+                                }catch (NumberFormatException e){
+                                    System.out.println("숫자를 입력해주세요.");
+                                    continue;
+                                }
+                                if (Integer.parseInt(str) < i && Integer.parseInt(str) > 0){
+                                    String[] target = document.split("[/]"); //수정 대상 : target[i-1]
+
+                                }
                             }
                         }
                     } else if (mode == 'q') break;
                 }
                 System.out.printf("초기 화면으로 돌아갑니다..\n");
             }
+        }
+
+        private boolean checkDatePassed(int year, int month, int day) {
+            //날이 지났는지 확인. 현재 날짜를 기준으로 과거면 true, 미래면 false return.
+            if (year_today < year) return false;
+            else if (year_today == year && month_today < month) return false;
+            else if (year_today == year && month_today == month && day_today < day) return false;
+            return true;
         }
 
         static String read_date(String date, char branch, char space) throws IOException {
